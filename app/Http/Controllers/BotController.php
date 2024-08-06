@@ -78,9 +78,13 @@ class BotController extends Controller
         $bot = TelegraphBot::first();
         if ($bot) {
             $chat = $bot->chats()->where('chat_id', $chat_id)->first();
+            if (!$chat) {
+                $chat = $bot->chats()->create([
+                    'chat_id' => $chat_id,
+                    'name' => 'Chat-' . $chat_id,
+                ]);
+            }
             $chat->message($text)->send();
-        } else {
-            Log::error('No bot found in database');
         }
     }
 }
